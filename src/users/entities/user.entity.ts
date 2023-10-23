@@ -12,5 +12,5 @@ export class User {
   password: string;
 
   @Column({ default: false })
-  admin: string;
+  admin: boolean;
 }
