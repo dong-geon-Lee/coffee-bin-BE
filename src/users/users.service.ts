@@ -17,7 +17,7 @@ export class UsersService {
   }
 
   async create(email: string, password: string) {
-    const user = await this.repo.create({ email, password });
-    return this.repo.save(user);
+    const user = this.repo.create({ email, password });
+    return await this.repo.save(user);
   }
 }
