@@ -7,10 +7,14 @@ import {
   Post,
   Body,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { CurrentUser } from 'src/users/decorators/current-user.decorator';
+import { User } from './entities/user.entity';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('auth')
 export class UsersController {
@@ -22,6 +26,12 @@ export class UsersController {
   @Get()
   async findAllUser(@Query('email') email: string) {
     return await this.usersService.find(email);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/profile')
+  getProfile(@CurrentUser() user: User) {
+    return user;
   }
 
   @Get('/:id')

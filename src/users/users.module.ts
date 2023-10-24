@@ -10,15 +10,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    // JwtModule.register({
-    //   secret: "secret",
-    //   signOptions: { expiresIn: '60s' },
-    // }),
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'), // 환경 변수에서 JWT 시크릿 키 로드
-        signOptions: { expiresIn: '60s' },
+        global: true,
+        secret: configService.get('JWT_SECRET'),
+        signOptions: { expiresIn: '600000s' },
       }),
       inject: [ConfigService],
     }),
