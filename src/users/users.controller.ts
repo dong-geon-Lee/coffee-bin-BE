@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Post,
   Body,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
@@ -33,5 +34,12 @@ export class UsersController {
   @Post('/signup')
   async signUp(@Body() body: CreateUserDto) {
     return await this.authService.signup(body.email, body.password);
+  }
+
+  @Post('/signin')
+  async signIn(@Body() body: CreateUserDto) {
+    const user = await this.authService.signin(body.email, body.password);
+    if (!user) throw new UnauthorizedException('로그인 인증 실패');
+    return user;
   }
 }
