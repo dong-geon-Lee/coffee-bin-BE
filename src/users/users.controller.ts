@@ -8,6 +8,8 @@ import {
   Body,
   UnauthorizedException,
   UseGuards,
+  Delete,
+  Patch,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
@@ -18,6 +20,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dto/user.dto';
 import { UserTokenDto } from './dto/accessToken.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('auth')
 export class UsersController {
@@ -56,6 +59,19 @@ export class UsersController {
   async signIn(@Body() body: CreateUserDto) {
     const user = await this.authService.signin(body.email, body.password);
     if (!user) throw new UnauthorizedException('로그인 인증 실패');
-    return { access_token: user.access_token };
+    return user;
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('/:id')
+  removeUser(@Param('id') id: string) {
+    return this.usersService.remove(parseInt(id));
+  }
+
+  @UseGuards(AuthGuard)
+  @Serialize(UserDto)
+  @Patch('/:id')
+  updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+    return this.usersService.update(parseInt(id), body);
   }
 }
